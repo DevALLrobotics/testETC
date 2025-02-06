@@ -22,3 +22,5 @@ touch_12 = Touchled(Ports.PORT12)
 
 touch_12.set_brightness(100)
 touch_12.set_color(Color.BLUE)
+wait(1,SECONDS)
+touch_12.set_color(Color.GREEN)
