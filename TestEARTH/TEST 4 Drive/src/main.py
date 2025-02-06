@@ -20,7 +20,13 @@ motor_10 = Motor(Ports.PORT10, 1.0, True)
 
 touch_12 = Touchled(Ports.PORT12)
 
-touch_12.set_brightness(100)
-touch_12.set_color(Color.BLUE)
-wait(1,SECONDS)
-touch_12.set_color(Color.GREEN)
+class _Motor():
+    def __init__(self,M1,M2,M3,M4,Velocity,StopTypes):
+        self.M1 = M1
+        self.M2 = M2
+        self.M3 = M3
+        self.M4 = M4
+        self.Velocity = Velocity
+        self.StopTypes = StopTypes
+
+    
