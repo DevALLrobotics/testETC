@@ -12,7 +12,7 @@
 		"slot": 5,
 		"sdkVersion": "IQ2_1_0_0_20",
 		"python": {
-			"main": "src/Autonomous.py"
+			"main": "src/AT.py"
 		}
 	}
 }
