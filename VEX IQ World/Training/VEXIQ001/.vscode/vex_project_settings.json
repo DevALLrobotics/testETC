@@ -1,0 +1,18 @@
+{
+	"extension": {
+		"version": "0.6.1",
+		"json": 2
+	},
+	"project": {
+		"name": "VEXIQ001",
+		"description": "",
+		"creationDate": "2/8/2025, 2:28:03 PM",
+		"platform": "IQ2",
+		"language": "python",
+		"slot": 3,
+		"sdkVersion": "IQ2_1_0_0_20",
+		"python": {
+			"main": "src/main.py"
+		}
+	}
+}
