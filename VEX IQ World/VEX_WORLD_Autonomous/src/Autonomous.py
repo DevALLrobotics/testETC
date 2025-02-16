@@ -1,12 +1,3 @@
-# ---------------------------------------------------------------------------- #
-#                                                                              #
-# 	Module:       main.py                                                      #
-# 	Author:       EARTH                                                        #
-# 	Created:      2/6/2025, 11:51:10 AM                                        #
-# 	Description:  IQ2 project                                                  #
-#                                                                              #
-# ---------------------------------------------------------------------------- #
-
 # Library imports
 from vex import *
 # from MotorDrive import _Motor
@@ -14,106 +5,98 @@ from vex import *
 
 brain = Brain()
 
-motor_7 = Motor(Ports.PORT7, 1.0, False)
-motor_9 = Motor(Ports.PORT9, 1.0, False)
-motor_10 = Motor(Ports.PORT10, 1.0, True)
-motor_12 = Motor(Ports.PORT12, 1.0, True)
-Pneumatic5 = Pneumatic(Ports.PORT5)
+motor_main_left = Motor(Ports.PORT7, 1.0, False)
+motor_spin_left = Motor(Ports.PORT9, 1.0, False)
+motor_spin_right = Motor(Ports.PORT10, 1.0, True)
+motor_main_right = Motor(Ports.PORT12, 1.0, True)
 
-motor_main_left = motor_7
-motor_spin_left = motor_9
-motor_spin_right = motor_10
-motor_main_right = motor_12
+Pneumatic5 = Pneumatic(Ports.PORT5)
 
 Pneumatic5.pump_on()
 
+class Pneumatic_Control:
+    def __init__(self):
+        pass
+
+    def TWD(self):
+        Pneumatic5.extend(CYLINDER1)
+    def FWD(self):
+        Pneumatic5.retract(CYLINDER1)
 
 
+
+
+ 
+
+class Drive_Control:
+
+        def __init__(self):
+            self.brain_inertial = Inertial()
+            self.Pneumatics = Pneumatic_Control()
+            self.left_drive_smart = MotorGroup(motor_main_left, motor_spin_left)
+            self.right_drive_smart = MotorGroup(motor_main_right, motor_spin_right)
+            self.drivetrain_TWD = SmartDrive(motor_main_left, motor_main_right, self.brain_inertial, 200)  
+            self.drivetrain_FWD = SmartDrive(self.left_drive_smart, self.right_drive_smart, self.brain_inertial, 200)   
+
+
+        def Forward_TWD(self,Distance,Velocity):
+            self.Pneumatics.TWD()
+            self.drivetrain_TWD.drive_for(FORWARD, Distance, MM, Velocity, PERCENT, wait=True)
+
+        def Reverse_TWD(self,Distance,Velocity):
+            self.Pneumatics.TWD()
+            self.drivetrain_TWD.drive_for(REVERSE, Distance, MM, Velocity, PERCENT, wait=True)
         
-class Motor_Control:
-    class TWD:
-        class Forward_For:
-            def __init__(self,Stering,Velocity,Degree):
-                self.M1 = motor_main_left
-                self.M4 = motor_main_right
-                self.Stering = Stering
-                self.Velocity = Velocity
-                self.Degree = Degree
-                self.Pneumatic = Pneumatic5
-                self.Pneumatic.extend(CYLINDER1)
-                self.M1.set_position(0,DEGREES)
-                self.M4.set_position(0,DEGREES)
-                if Stering>=0:
-                    while self.M1.position(DEGREES) < self.Degree :
-                        self.M1.spin(FORWARD,self.Velocity)
-                        self.M4.spin(FORWARD,(self.Velocity-self.Stering))
-                else:
-                    while self.M4.position(DEGREES) < self.Degree :
-                        self.M1.spin(FORWARD,(self.Velocity+self.Stering))
-                        self.M4.spin(FORWARD,self.Velocity)
+        def Left_TWD(self,Degree,Velocity):
+            self.Pneumatics.TWD()
+            self.drivetrain_TWD.turn_for(LEFT, Degree, DEGREES, Velocity, PERCENT, wait=True)
 
-        class stop:
-            def __init__(self,StopTypes):
-                self.M1 = motor_main_left
-                self.M4 = motor_main_right
-                self.StopTypes = StopTypes
-
-                self.Pneumatic = Pneumatic5
-                self.Pneumatic.extend(CYLINDER1)
-
-                self.M1.set_stopping(self.StopTypes)
-                self.M4.set_stopping(self.StopTypes)
-                self.M1.stop()
-                self.M4.stop()
-            
+        def Right_TWD(self,Degree,Velocity):
+            self.Pneumatics.TWD()
+            self.drivetrain_TWD.turn_for(RIGHT, Degree, DEGREES, Velocity, PERCENT, wait=True)
+        
+        def Stop_TWD(self):
+            motor_main_left.stop()
+            motor_main_right.stop()
 
 
-    class FWD:
-        class Forward_For:
-            def __init__(self,Stering,Velocity,Degree):
-                self.M1 = motor_main_left
-                self.M2 = motor_spin_left
-                self.M3 = motor_spin_right
-                self.M4 = motor_main_right
-                self.Stering = Stering
-                self.Velocity = Velocity
-                self.Degree = Degree
-                self.Pneumatic = Pneumatic5
-                self.Pneumatic.retract(CYLINDER1)
-                self.M1.set_position(0,DEGREES)
-                self.M4.set_position(0,DEGREES)
-                if Stering>=0:
-                    while self.M1.position(DEGREES) < self.Degree :
-                        self.M1.spin(FORWARD,self.Velocity)
-                        self.M2.spin(FORWARD,self.Velocity)
-                        self.M3.spin(FORWARD,(self.Velocity-self.Stering))
-                        self.M4.spin(FORWARD,(self.Velocity-self.Stering))
-                else:
-                    while self.M4.position(DEGREES) < self.Degree :
-                        self.M1.spin(FORWARD,(self.Velocity+self.Stering))
-                        self.M2.spin(FORWARD,(self.Velocity+self.Stering))
-                        self.M3.spin(FORWARD,self.Velocity)
-                        self.M4.spin(FORWARD,self.Velocity)
 
-        class stop:
-            def __init__(self,StopTypes):
-                self.M1 = motor_main_left
-                self.M2 = motor_spin_left
-                self.M3 = motor_spin_right
-                self.M4 = motor_main_right
-                self.StopTypes = StopTypes
 
-                self.Pneumatic = Pneumatic5
-                self.Pneumatic.retract(CYLINDER1)
 
-                self.M1.set_stopping(self.StopTypes)
-                self.M2.set_stopping(self.StopTypes)
-                self.M3.set_stopping(self.StopTypes)
-                self.M4.set_stopping(self.StopTypes)
-                self.M1.stop()
-                self.M2.stop()
-                self.M3.stop()
-                self.M4.stop()
+        def Forward_FWD(self,Distance,Velocity):
+            self.Pneumatics.FWD()
+            self.drivetrain_FWD.drive_for(FORWARD, Distance,MM, Velocity, PERCENT, wait=True)
+        
+        def Reverse_FWD(self,Distance,Velocity):
+            self.Pneumatics.TWD()
+            self.drivetrain_FWD.drive_for(REVERSE, Distance, MM, Velocity, PERCENT, wait=True)
+        
+        def Left_FWD(self,Degree,Velocity):
+            self.Pneumatics.TWD()
+            self.drivetrain_FWD.turn_for(LEFT, Degree, DEGREES, Velocity, PERCENT, wait=True)
+
+        def Right_FWD(self,Degree,Velocity):
+            self.Pneumatics.TWD()
+            self.drivetrain_FWD.turn_for(RIGHT, Degree, DEGREES, Velocity, PERCENT, wait=True)
+
+        def Stop_FWD(self):
+            motor_main_left.stop()
+            motor_main_right.stop()
+            motor_main_left.stop()
+            motor_main_right.stop()
+        
+        
+
+Drive = Drive_Control()
+Pneumatics = Pneumatic_Control()
+
+
+Drive.Forward_TWD(Distance = 300, Velocity = 50)
+Drive.Reverse_FWD(Distance = 300, Velocity = 50)
+Drive.Stop_FWD()
+
+Pneumatics.TWD()
+
 
 
 
