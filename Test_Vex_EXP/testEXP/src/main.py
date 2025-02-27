@@ -13,12 +13,17 @@ from vex import *
 # Create the Brain.
 brain = Brain()
 digital_in_a = DigitalIn(brain.three_wire_port.a)
+motor_4 = Motor(Ports.PORT4, True)
 
-# test for see value input A 
 
 print("start")
 while True:
     test = digital_in_a.value()
     print(test)
-    wait(1,SECONDS)
+    # print(type(test))
+    if test == 1:
+        motor_4.spin(FORWARD,50,PERCENT)
+    else:
+        motor_4.stop()
+    wait(100,MSEC)
     
