@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ปฏิทินลงเวลางาน</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        input[type="date"], input[type="text"] {
+            padding: 5px;
+            width: 90%;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>ปฏิทินลงเวลางาน</h2>
+    
+    <label for="workDate">เลือกวันที่:</label>
+    <input type="date" id="workDate">
+    
+    <label for="workTask">รายละเอียดงาน:</label>
+    <input type="text" id="workTask" placeholder="ใส่รายละเอียดงาน">
+    
+    <button onclick="addWorkSchedule()">เพิ่มงาน</button>
+
+    <table id="workSchedule">
+        <thead>
+            <tr>
+                <th>วันที่</th>
+                <th>รายละเอียดงาน</th>
+                <th>ลบ</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        function addWorkSchedule() {
+            let dateInput = document.getElementById('workDate').value;
+            let taskInput = document.getElementById('workTask').value;
+            let table = document.getElementById('workSchedule').getElementsByTagName('tbody')[0];
+
+            if (dateInput && taskInput) {
+                let newRow = table.insertRow();
+                let dateCell = newRow.insertCell(0);
+                let taskCell = newRow.insertCell(1);
+                let deleteCell = newRow.insertCell(2);
+
+                dateCell.textContent = dateInput;
+                taskCell.textContent = taskInput;
+
+                let deleteBtn = document.createElement('button');
+                deleteBtn.textContent = "ลบ";
+                deleteBtn.style.backgroundColor = "#e74c3c";
+                deleteBtn.style.color = "white";
+                deleteBtn.style.border = "none";
+                deleteBtn.style.cursor = "pointer";
+                deleteBtn.onclick = function () {
+                    table.deleteRow(newRow.rowIndex - 1);
+                };
+                
+                deleteCell.appendChild(deleteBtn);
+            } else {
+                alert("กรุณาเลือกวันที่และใส่รายละเอียดงาน!");
+            }
+        }
+    </script>
+
+</body>
+</html>

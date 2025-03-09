@@ -29,6 +29,10 @@ def get_db_connection():
     except mariadb.Error as e:
         print(f"Error connecting to MariaDB: {e}")
         return None
+    
+@app.route('/test')
+def test():
+    return "testDebug : test Ok" , 200
 
 # Register User
 @app.route('/register', methods=['POST'])
@@ -91,4 +95,4 @@ def protected():
     return jsonify({"message": f"Hello {current_user}, you have access!"})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000, debug=True)
+    app.run(host='0.0.0.0',port=6666, debug=True)

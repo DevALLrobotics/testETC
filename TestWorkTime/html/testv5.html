@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ปฏิทินลงเวลางาน (เลือกวันหยุดได้เอง)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+        }
+        .calendar-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .calendar {
+            width: 60%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        .work-day {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .day-off {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .empty {
+            background: #f4f4f4;
+            cursor: default;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>ปฏิทินลงเวลางาน (เลือกวันหยุดได้เอง)</h2>
+    
+    <label for="workMonth">เลือกเดือน:</label>
+    <input type="month" id="workMonth">
+    
+    <button onclick="generateCalendar()">สร้างปฏิทิน</button>
+
+    <div class="calendar-container">
+        <div class="calendar">
+            <table id="calendarTable">
+                <thead>
+                    <tr>
+                        <th>อาทิตย์</th>
+                        <th>จันทร์</th>
+                        <th>อังคาร</th>
+                        <th>พุธ</th>
+                        <th>พฤหัส</th>
+                        <th>ศุกร์</th>
+                        <th>เสาร์</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let holidays = new Set();  // เก็บวันหยุดที่เลือก
+
+        function generateCalendar() {
+            let monthInput = document.getElementById('workMonth').value;
+            if (!monthInput) {
+                alert("กรุณาเลือกเดือน!");
+                return;
+            }
+
+            let [year, month] = monthInput.split('-').map(Number);
+            let firstDay = new Date(year, month - 1, 1).getDay();
+            let daysInMonth = new Date(year, month, 0).getDate();
+            let tableBody = document.getElementById('calendarTable').getElementsByTagName('tbody')[0];
+
+            tableBody.innerHTML = "";
+            holidays.clear();  // เคลียร์วันหยุดก่อนสร้างใหม่
+
+            let date = 1;
+            for (let i = 0; i < 6; i++) {
+                let row = document.createElement("tr");
+
+                for (let j = 0; j < 7; j++) {
+                    let cell = document.createElement("td");
+
+                    if (i === 0 && j < firstDay) {
+                        cell.classList.add("empty");
+                    } else if (date > daysInMonth) {
+                        break;
+                    } else {
+                        let cellDate = `${year}-${String(month).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                        cell.textContent = date;
+                        cell.classList.add("work-day");
+
+                        cell.addEventListener("click", function () {
+                            toggleHoliday(cell, cellDate);
+                        });
+
+                        date++;
+                    }
+
+                    row.appendChild(cell);
+                }
+
+                tableBody.appendChild(row);
+
+                if (date > daysInMonth) break;
+            }
+        }
+
+        function toggleHoliday(cell, date) {
+            if (holidays.has(date)) {
+                holidays.delete(date);
+                cell.classList.remove("day-off");
+                cell.classList.add("work-day");
+            } else {
+                holidays.add(date);
+                cell.classList.remove("work-day");
+                cell.classList.add("day-off");
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก - ALL Robotics</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        .signup-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #ff6b00;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+        }
+        .btn:hover {
+            background-color: #e65c00;
+        }
+        .home-btn {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: #002147;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .home-btn:hover {
+            background-color: #001530;
+        }
+    </style>
+    <script>
+        function registerUser(event) {
+            event.preventDefault(); // ป้องกันการ reload หน้าเว็บ
+            
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            
+            const data = { username, email, password };
+            
+            fetch("https://159.89.207.194:6666/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert("สมัครสมาชิกสำเร็จ!");
+                window.location.href = "login.html";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("เกิดข้อผิดพลาดในการสมัครสมาชิก");
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="signup-container">
+        <h2>สมัครสมาชิก</h2>
+        <form onsubmit="registerUser(event)">
+            <input type="text" id="username" placeholder="ชื่อผู้ใช้" required>
+            <input type="email" id="email" placeholder="อีเมล" required>
+            <input type="password" id="password" placeholder="รหัสผ่าน" required>
+            <button type="submit" class="btn">สมัครสมาชิก</button>
+        </form>
+        <p>มีบัญชีแล้ว? <a href="login.html">เข้าสู่ระบบ</a></p>
+        <a href="index.html" class="home-btn">กลับหน้าแรก</a>
+    </div>
+</body>
+</html>
