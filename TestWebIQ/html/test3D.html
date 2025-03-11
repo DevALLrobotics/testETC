@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Models in One Row - Three.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: #eee; 
+        }
+        .container { 
+            display: flex; 
+            gap: 20px; 
+        }
+        .canvas-container {
+            width: 300px; 
+            height: 300px; 
+            background-color: white; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="model1" class="canvas-container"></div>
+        <div id="model2" class="canvas-container"></div>
+    </div>
+
+    <script>
+        function loadModel(containerId, modelPath) {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(300, 300);
+            document.getElementById(containerId).appendChild(renderer.domElement);
+            
+            // Add Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(2, 2, 5);
+            scene.add(directionalLight);
+
+            // Load 3D Model
+            const loader = new THREE.GLTFLoader();
+            loader.load(modelPath, function(gltf) {
+                const model = gltf.scene;
+                scene.add(model);
+                model.position.set(0, -0.5, 0);
+                model.scale.set(1, 1, 1); // ปรับขนาดโมเดล
+
+                // Rotation animation
+                function animate() {
+                    requestAnimationFrame(animate);
+                    model.rotation.y += 0.01; // หมุนโมเดลช้าๆ
+                    renderer.render(scene, camera);
+                }
+                animate();
+            });
+
+            camera.position.z = 2;
+        }
+
+        // โหลดโมเดลทั้งสองตัว
+        loadModel("model1", "model1.glb");
+        loadModel("model2", "model2.glb");
+    </script>
+
+</body>
+</html>
