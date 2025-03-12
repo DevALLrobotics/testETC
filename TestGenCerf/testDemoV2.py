@@ -23,7 +23,7 @@ def create_certificate(output_path, name, course):
     width, height = landscape(A4)
 
     # ตรวจสอบภาพพื้นหลัง
-    background = "images/test_certificate.png"
+    background = "images/demo_certificate.png"
     if os.path.exists(background):
         pdf.drawImage(background, 0, 0, width=width, height=height)
     else:
@@ -41,7 +41,7 @@ def create_certificate(output_path, name, course):
     
 
     pdf.setFillColorRGB(0.1, 0.1, 0.1)  # ตัวอักษรสีขาว
-    pdf.drawCentredString(width / 2, height / 2 + 60, f"Course: {course}")
+    pdf.drawCentredString(width / 2 +100, height / 2 + 60, f"Course: {course}")
 
     # บันทึกไฟล์ PDF
     pdf.save()
