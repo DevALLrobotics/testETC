@@ -1,59 +1,68 @@
 import hashlib
+import itertools
 import multiprocessing
+
+def candidate_generator(charset, length):
+    """
+    สร้าง generator สำหรับ candidate จาก charset โดยให้ candidate มีความยาวเท่ากับ length
+    """
+    return (''.join(candidate) for candidate in itertools.product(charset, repeat=length))
 
 def check_candidate(args):
     """
-    ฟังก์ชันสำหรับตรวจสอบว่า candidate ที่ส่งเข้ามาตรงกับ target hash หรือไม่
-    :param args: tuple ที่ประกอบด้วย (i, target_hash, num_digits)
-    :return: candidate (เป็น string) ถ้าตรงกัน มิฉะนั้นจะ return None
+    ตรวจสอบว่า candidate เมื่อเข้ารหัส MD5 ตรงกับ target_hash หรือไม่
+    :param args: tuple (candidate, target_hash)
+    :return: candidate ถ้าตรงกัน มิฉะนั้นคืนค่า None
     """
-    i, target_hash, num_digits = args
-    # แปลงตัวเลขให้เป็น string ที่มีจำนวนหลักตามที่กำหนด (เติมเลข 0 ข้างหน้า)
-    attempt = str(i).zfill(num_digits)
-    # คำนวณ MD5 ของ attempt นั้น
-    hashed_attempt = hashlib.md5(attempt.encode()).hexdigest()
-    
-    if hashed_attempt == target_hash:
-        return attempt  # พบ candidate ที่ถูกต้อง
+    candidate, target_hash = args
+    hashed_candidate = hashlib.md5(candidate.encode()).hexdigest()
+    if hashed_candidate == target_hash:
+        return candidate
     return None
 
-def brute_force_password_parallel(target_hash, num_digits=4):
+def brute_force_alphanumeric(target_hash, charset, length):
     """
-    ฟังก์ชันสำหรับค้นหาค่า candidate ที่เข้ารหัส MD5 ตรงกับ target_hash โดยใช้ multiprocessing
-    :param target_hash: ค่า MD5 ที่ต้องการค้นหา
-    :param num_digits: จำนวนหลักของ candidate (default: 4)
-    :return: รหัสผ่านที่พบ หรือ None ถ้าไม่พบ
+    ค้นหา candidate ที่ MD5 ตรงกับ target_hash โดยใช้ multiprocessing พร้อมแสดงผลความคืบหน้า
+    :param target_hash: ค่า MD5 ที่ต้องการหา
+    :param charset: ชุดอักขระที่ใช้สร้าง candidate
+    :param length: ความยาวของ candidate
+    :return: candidate ที่พบหรือ None
     """
-    max_attempts = 10 ** num_digits  # สำหรับ 4 หลัก คือ 0000 ถึง 9999
-
-    # เตรียมข้อมูลสำหรับส่งให้แต่ละ process ในรูปแบบ tuple
-    args_list = [(i, target_hash, num_digits) for i in range(max_attempts)]
-
-    # สร้าง Pool ของ process (จำนวน process จะเท่ากับจำนวน CPU cores โดยอัตโนมัติ)
     pool = multiprocessing.Pool()
-
     found_password = None
+    processed_count = 0
     try:
+        candidate_iter = candidate_generator(charset, length)
+        # จับคู่ candidate กับ target_hash ใน tuple
+        candidate_args = ((candidate, target_hash) for candidate in candidate_iter)
+        
         # ใช้ imap_unordered เพื่อประมวลผล candidate แบบขนาน
-        for result in pool.imap_unordered(check_candidate, args_list, chunksize=100):
+        for result in pool.imap_unordered(check_candidate, candidate_args, chunksize=1000):
+            processed_count += 1            
+            print(f"Processed {processed_count} candidates...")
             if result is not None:
                 found_password = result
-                # พบ candidate ที่ตรงกันแล้ว ให้ยกเลิก process อื่น ๆ
-                pool.terminate()
+                pool.terminate()  # ยกเลิก process อื่น ๆ เมื่อพบ candidate ที่ตรงกัน
                 break
     finally:
         pool.close()
         pool.join()
-
     return found_password
 
 if __name__ == "__main__":
-    # สมมุติว่าเราต้องการค้นหาค่า MD5 ของ "123456" ซึ่งเป็นตัวเลข 6 หลัก
-    # คุณสามารถคำนวณ MD5 ของ "123456" แล้วนำค่ามาใช้ใน target_hash ได้
-    target_hash = "e10adc3949ba59abbe56e057f20f883e"  # MD5 ของ "123456"
-    password = brute_force_password_parallel(target_hash, num_digits=6)
-
+    
+    target_hash = "db2351a4c8edc8f24400bdc1a52cd442"  # ตรวจสอบให้แน่ใจว่าค่านี้ถูกต้องสำหรับ "Ab1!"
+    
+    # กำหนด charset ที่มีทั้งตัวเลข, ตัวอักษรพิมพ์เล็ก, พิมพ์ใหญ่ และสัญลักษณ์พิเศษ
+    charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()"
+    length = 4  # เพิ่มความยาว candidate เป็น 4 ตัว
+    
+    print("กำลังค้นหา candidate ที่มีความยาว 4 ตัวอักษรจาก charset ที่ซับซ้อน...")
+    password = brute_force_alphanumeric(target_hash, charset, length)
+    
     if password:
         print(f"✅ Password found: {password}")
     else:
         print("❌ Password not found within the given range.")
+
+
