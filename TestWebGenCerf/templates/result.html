@@ -6,7 +6,19 @@
         body { font-family: sans-serif; padding: 20px; }
         .card { border: 1px solid #ccc; padding: 20px; margin-bottom: 30px; }
         iframe { width: 100%; height: 500px; border: 1px solid #888; }
-        .btn { display: inline-block; margin-top: 10px; padding: 10px 16px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; }
+        .btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 16px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
@@ -15,17 +27,17 @@
     {% for p in previews %}
         <div class="card">
             <h2>{{ p.name }} - {{ p.course }}</h2>
-
             <iframe 
                 src="{{ url_for('serve_pdf', filename=p.pdf) }}"
                 type="application/pdf"
                 allowfullscreen>
             </iframe>
-
             <br>
             <a class="btn" href="{{ url_for('serve_pdf', filename=p.pdf) }}" download>⬇️ ดาวน์โหลด PDF</a>
         </div>
     {% endfor %}
+
+    <a class="btn btn-back" href="{{ url_for('index') }}">🔙 กลับหน้าหลัก</a>
 
 </body>
 </html>
