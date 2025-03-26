@@ -5,6 +5,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import landscape, A4
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
+import zipfile
+import datetime
 
 # ===== ฟอนต์เริ่มต้น =====
 font_path = "static/fonts/DancingScript-VariableFont_wght.ttf"
@@ -43,3 +45,16 @@ def create_certificate(output_path, name, course):
 
     pdf.save()
     print(f"✅ สร้างใบเกียรติบัตร: {output_path}")
+
+def create_zip_from_pdfs(pdf_paths, zip_name=None, output_folder="output"):
+    """รวมไฟล์ PDF หลายไฟล์เป็น ZIP"""
+    if not zip_name:
+        zip_name = f"certificates_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
+    
+    zip_path = os.path.join(output_folder, zip_name)
+    
+    with zipfile.ZipFile(zip_path, 'w') as zipf:
+        for pdf in pdf_paths:
+            zipf.write(pdf, os.path.basename(pdf))
+    
+    return zip_name  # ส่งแค่ชื่อไฟล์กลับไป

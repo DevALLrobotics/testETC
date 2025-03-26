@@ -1,18 +1,21 @@
 import os
 from flask import Flask, render_template, request, send_file, send_from_directory, url_for
 from werkzeug.utils import secure_filename
-from utils.certificate_utils import load_data, create_certificate, sanitize_filename
+from utils.certificate_utils import (
+    load_data, 
+    create_certificate, 
+    sanitize_filename,
+    create_zip_from_pdfs
+)
 
 app = Flask(__name__)
 
 # ตั้งค่าโฟลเดอร์
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "output"
-PREVIEW_FOLDER = os.path.join("static", "preview")
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-os.makedirs(PREVIEW_FOLDER, exist_ok=True)
 
 # ================== 🌐 Routes ==================
 
@@ -20,11 +23,11 @@ os.makedirs(PREVIEW_FOLDER, exist_ok=True)
 def index():
     if request.method == "POST":
         if "file" not in request.files:
-            return "❌ ไม่มีไฟล์ที่อัปโหลด", 400
+            return render_template("error.html", error_message="❌ ไม่มีไฟล์ที่อัปโหลด"), 400
 
         file = request.files["file"]
         if file.filename == "":
-            return "❌ กรุณาเลือกไฟล์", 400
+            return render_template("error.html", error_message="❌ กรุณาเลือกไฟล์"), 400
 
         filename = secure_filename(file.filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -33,10 +36,11 @@ def index():
         try:
             df = load_data(file_path)
         except Exception as e:
-            return f"❌ ไม่สามารถโหลดไฟล์ได้: {e}", 400
+            error_msg = f"❌ ไม่สามารถโหลดไฟล์ได้: {e}"
+            return render_template("error.html", error_message=error_msg), 400
 
         if "Name" not in df.columns or "Course" not in df.columns:
-            return "❌ ไม่พบคอลัมน์ 'Name' หรือ 'Course' ในไฟล์", 400
+            return render_template("error.html", error_message="❌ ไม่พบคอลัมน์ 'Name' หรือ 'Course' ในไฟล์"), 400
 
         previews = []
         for _, row in df.iterrows():
@@ -53,20 +57,29 @@ def index():
                 "pdf": os.path.basename(output_path)
             })
 
-        return render_template("result.html", previews=previews)
+        pdf_paths = [os.path.join(OUTPUT_FOLDER, p["pdf"]) for p in previews]
+        zip_filename = create_zip_from_pdfs(pdf_paths)
+
+        return render_template("result.html", previews=previews, zip_filename=zip_filename)
 
     return render_template("index.html")
 
 @app.route("/download/<filename>")
 def download_file(filename):
-    """ดาวน์โหลด PDF เป็นไฟล์แนบ"""
+    """ดาวน์โหลดไฟล์ PDF เป็นไฟล์แนบ"""
     file_path = os.path.join(OUTPUT_FOLDER, filename)
     return send_file(file_path, as_attachment=True)
 
 @app.route("/output/<filename>")
 def serve_pdf(filename):
-    """แสดง PDF สำหรับ preview ใน iframe"""
+    """แสดง PDF ใน iframe"""
     return send_from_directory(OUTPUT_FOLDER, filename, mimetype='application/pdf')
+
+@app.route("/download_all/<filename>")
+def download_all(filename):
+    """ดาวน์โหลดไฟล์ ZIP รวมทุก PDF"""
+    zip_path = os.path.join(OUTPUT_FOLDER, filename)
+    return send_file(zip_path, as_attachment=True)
 
 # ================== 🚀 Run App ==================
 
