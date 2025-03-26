@@ -2,3 +2,5 @@ TestLLM/.env
 TestWebIQ/api/.env
 /TestWebGenCerf/venv
 TestWebGenCerf/.DS_Store
+TestWebGenCerf/utils/__pycache__/certificate_utils.cpython-312.pyc
+TrainAI/.DS_Store
