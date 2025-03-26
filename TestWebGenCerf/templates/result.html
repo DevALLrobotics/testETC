@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ผลการสร้างใบเกียรติบัตร</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .card { border: 1px solid #ccc; padding: 20px; margin-bottom: 30px; }
+        iframe { width: 100%; height: 500px; border: 1px solid #888; }
+        .btn { display: inline-block; margin-top: 10px; padding: 10px 16px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>✅ ใบเกียรติบัตรของคุณ</h1>
+
+    {% for p in previews %}
+        <div class="card">
+            <h2>{{ p.name }} - {{ p.course }}</h2>
+
+            <iframe 
+                src="{{ url_for('serve_pdf', filename=p.pdf) }}"
+                type="application/pdf"
+                allowfullscreen>
+            </iframe>
+
+            <br>
+            <a class="btn" href="{{ url_for('serve_pdf', filename=p.pdf) }}" download>⬇️ ดาวน์โหลด PDF</a>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
