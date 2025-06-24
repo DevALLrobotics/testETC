@@ -9,10 +9,10 @@ import zipfile
 import datetime
 
 # ===== ฟอนต์เริ่มต้น =====
-font_path = "static/fonts/DancingScript-VariableFont_wght.ttf"
+font_path = "static/fonts/Montserrat-Medium.ttf"
 if os.path.exists(font_path):
-    pdfmetrics.registerFont(TTFont("DancingScript-VariableFont_wght", font_path))
-    font_name = "DancingScript-VariableFont_wght"
+    pdfmetrics.registerFont(TTFont("Montserrat-Medium", font_path))
+    font_name = "Montserrat-Medium"
 else:
     font_name = "Helvetica"
 
@@ -56,11 +56,11 @@ def create_certificate(output_path, name, course):
     if os.path.exists(background):
         pdf.drawImage(background, 0, 0, width=width, height=height)
 
-    pdf.setFont(font_name, 56)
+    pdf.setFont(font_name, 30)
     pdf.setFillColorRGB(1, 1, 1)
-    pdf.drawCentredString(width / 2, height / 2 - 15, name)
+    pdf.drawCentredString(width / 2 , height / 2 - 30, name)
 
-    pdf.setFont(font_name, 26)
+    pdf.setFont(font_name, 13)
     pdf.drawCentredString(width / 2 + 150, height / 2 + 60, f"Course: {course}")
 
     pdf.save()

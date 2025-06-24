@@ -39,21 +39,21 @@ def index():
             error_msg = f"❌ ไม่สามารถโหลดไฟล์ได้: {e}"
             return render_template("error.html", error_message=error_msg), 400
 
-        if "Name" not in df.columns or "Course" not in df.columns:
-            return render_template("error.html", error_message="❌ ไม่พบคอลัมน์ 'Name' หรือ 'Course' ในไฟล์"), 400
+        if "Name" not in df.columns or "ID" not in df.columns:
+            return render_template("error.html", error_message="❌ ไม่พบคอลัมน์ 'Name' หรือ 'ID' ในไฟล์"), 400
 
         previews = []
         for _, row in df.iterrows():
             name = str(row["Name"]).strip()
-            course = str(row["Course"]).strip()
+            ID = str(row["ID"]).strip()
             safe_name = sanitize_filename(name)
             output_path = os.path.join(OUTPUT_FOLDER, f"{safe_name}_certificate.pdf")
 
-            create_certificate(output_path, name, course)
+            create_certificate(output_path, name, ID)
 
             previews.append({
                 "name": name,
-                "course": course,
+                "ID": ID,
                 "pdf": os.path.basename(output_path)
             })
 
