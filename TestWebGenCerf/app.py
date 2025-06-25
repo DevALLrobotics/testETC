@@ -49,7 +49,7 @@ def index():
             safe_name = sanitize_filename(name)
             output_path = os.path.join(OUTPUT_FOLDER, f"{safe_name}_certificate.pdf")
             
-            print(f"ID : {ID}")
+            # print(f"ID : {ID}")
 
             create_certificate(output_path, name, ID)
 
