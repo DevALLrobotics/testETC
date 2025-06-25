@@ -47,7 +47,7 @@ def load_data(file_path):
 #     print(f"✅ สร้างใบเกียรติบัตร: {output_path}")
 
 
-def create_certificate(output_path, name, course):
+def create_certificate(output_path, name, ID):
     # pdf = canvas.Canvas(output_path, pagesize=landscape(A4))
     pdf = canvas.Canvas(output_path, pagesize= portrait(A4))
     width, height = portrait(A4)
@@ -61,7 +61,7 @@ def create_certificate(output_path, name, course):
     pdf.drawCentredString(width / 2 , height / 2 - 30, name)
 
     pdf.setFont(font_name, 13)
-    pdf.drawCentredString(width / 2 + 150, height / 2 + 60, f"Course: {course}")
+    pdf.drawCentredString(width / 2 + 260, 810  , ID)
 
     pdf.save()
     print(f"✅ สร้างใบเกียรติบัตร: {output_path}")
