@@ -56,7 +56,7 @@ def create_certificate(output_path, name, ID):
     if os.path.exists(background):
         pdf.drawImage(background, 0, 0, width=width, height=height)
 
-    pdf.setFont(font_name, 30)
+    pdf.setFont(font_name, 26)
     pdf.setFillColorRGB(1, 1, 1)
     pdf.drawCentredString(width / 2 , height / 2 - 30, name)
 
