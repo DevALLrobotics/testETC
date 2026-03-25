@@ -1,6 +1,9 @@
 import pytest
 
-from TestPythonCamp.tests.exam_test_utils import get_required_function
+from TestPythonCamp.tests.exam_test_utils import (
+    assert_function_result,
+    get_required_function,
+)
 
 
 def get_add_numbers():
@@ -21,4 +24,9 @@ def get_add_numbers():
 )
 def test_question_1_add_numbers(a, b, expected):
     add_numbers = get_add_numbers()
-    assert add_numbers(a, b) == expected
+    assert_function_result(
+        add_numbers,
+        (a, b),
+        expected,
+        f"add_numbers({a!r}, {b!r})",
+    )

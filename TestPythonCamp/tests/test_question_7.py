@@ -1,6 +1,9 @@
 import pytest
 
-from TestPythonCamp.tests.exam_test_utils import get_required_function
+from TestPythonCamp.tests.exam_test_utils import (
+    assert_function_result,
+    get_required_function,
+)
 
 
 def get_reverse_text():
@@ -22,4 +25,9 @@ def get_reverse_text():
 )
 def test_question_7_reverse_text(text, expected):
     reverse_text = get_reverse_text()
-    assert reverse_text(text) == expected
+    assert_function_result(
+        reverse_text,
+        (text,),
+        expected,
+        f"reverse_text({text!r})",
+    )

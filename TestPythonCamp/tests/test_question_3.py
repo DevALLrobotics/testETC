@@ -1,6 +1,9 @@
 import pytest
 
-from TestPythonCamp.tests.exam_test_utils import get_required_function
+from TestPythonCamp.tests.exam_test_utils import (
+    assert_function_result,
+    get_required_function,
+)
 
 
 def get_sum_even_numbers():
@@ -21,4 +24,9 @@ def get_sum_even_numbers():
 )
 def test_question_3_sum_even_numbers(numbers, expected):
     sum_even_numbers = get_sum_even_numbers()
-    assert sum_even_numbers(numbers) == expected
+    assert_function_result(
+        sum_even_numbers,
+        (numbers,),
+        expected,
+        f"sum_even_numbers({numbers!r})",
+    )

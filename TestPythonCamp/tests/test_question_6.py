@@ -1,6 +1,9 @@
 import pytest
 
-from TestPythonCamp.tests.exam_test_utils import get_required_function
+from TestPythonCamp.tests.exam_test_utils import (
+    assert_function_result,
+    get_required_function,
+)
 
 
 def get_get_grade():
@@ -23,4 +26,9 @@ def get_get_grade():
 )
 def test_question_6_get_grade(score, expected):
     get_grade = get_get_grade()
-    assert get_grade(score) == expected
+    assert_function_result(
+        get_grade,
+        (score,),
+        expected,
+        f"get_grade({score!r})",
+    )

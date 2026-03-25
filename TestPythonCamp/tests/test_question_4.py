@@ -1,6 +1,9 @@
 import pytest
 
-from TestPythonCamp.tests.exam_test_utils import get_required_function
+from TestPythonCamp.tests.exam_test_utils import (
+    assert_function_result,
+    get_required_function,
+)
 
 
 def get_count_vowels():
@@ -23,4 +26,9 @@ def get_count_vowels():
 )
 def test_question_4_count_vowels(text, expected):
     count_vowels = get_count_vowels()
-    assert count_vowels(text) == expected
+    assert_function_result(
+        count_vowels,
+        (text,),
+        expected,
+        f"count_vowels({text!r})",
+    )

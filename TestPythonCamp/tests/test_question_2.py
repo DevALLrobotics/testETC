@@ -1,6 +1,9 @@
 import pytest
 
-from TestPythonCamp.tests.exam_test_utils import get_required_function
+from TestPythonCamp.tests.exam_test_utils import (
+    assert_function_result,
+    get_required_function,
+)
 
 
 def get_is_leap_year():
@@ -22,4 +25,9 @@ def get_is_leap_year():
 )
 def test_question_2_is_leap_year(year, expected):
     is_leap_year = get_is_leap_year()
-    assert is_leap_year(year) is expected
+    assert_function_result(
+        is_leap_year,
+        (year,),
+        expected,
+        f"is_leap_year({year!r})",
+    )
